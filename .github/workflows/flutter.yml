@@ -41,5 +41,5 @@ jobs:
         with:
           name: flutter-builds
           path: |
-            mobile_app/build/app/outputs/flutter-apk/app-release.apk
-            mobile_app/build/app/outputs/bundle/release/app-release.aab
+            nok_mobile_app/build/app/outputs/flutter-apk/app-release.apk
+            nok_mobile_app/build/app/outputs/bundle/release/app-release.aab
