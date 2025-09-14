@@ -14,14 +14,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: nok_mobile_app
+
     steps:
       # 1. Checkout source code
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # 2. Setup Flutter
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'   # or your Flutter version
+          flutter-version: '3.29.3'
 
       # 3. Get dependencies
       - run: flutter pub get
@@ -29,13 +33,13 @@ jobs:
       # 4. Build APK
       - run: flutter build apk --release
 
-      # 5. Build AAB (for Play Store)
+      # 5. Build AAB
       - run: flutter build appbundle --release
 
       # 6. Upload APK & AAB as artifacts
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: flutter-builds
           path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
+            nok_mobile_app/build/app/outputs/flutter-apk/app-release.apk
+            nok_mobile_app/build/app/outputs/bundle/release/app-release.aab
