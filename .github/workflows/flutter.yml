@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: mobile_app   # 👈 all run steps are inside mobile_app/
+        working-directory: nok_mobile_app
 
     steps:
       # 1. Checkout source code
