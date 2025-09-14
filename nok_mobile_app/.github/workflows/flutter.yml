@@ -1,0 +1,37 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ mobile_app ]   # runs on pushes to main branch
+  pull_request:          # also runs on PRs
+    branches: [ mobile_app ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout source code
+      - uses: actions/checkout@v3
+
+      # 2. Setup Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'   # or your Flutter version
+
+      # 3. Get dependencies
+      - run: flutter pub get
+
+      # 4. Build APK
+      - run: flutter build apk --release
+
+      # 5. Build AAB (for Play Store)
+      - run: flutter build appbundle --release
+
+      # 6. Upload APK & AAB as artifacts
+      - uses: actions/upload-artifact@v3
+        with:
+          name: flutter-builds
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
