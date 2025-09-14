@@ -2,9 +2,13 @@ name: Flutter CI
 
 on:
   push:
-    branches: [ mobile_app ]   # runs on pushes to main branch
-  pull_request:          # also runs on PRs
-    branches: [ mobile_app ]
+    branches: 
+      - main
+      - mobile_app
+  pull_request:
+    branches: 
+      - main
+      - mobile_app
 
 jobs:
   build:
