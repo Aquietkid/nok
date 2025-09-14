@@ -1,0 +1,1 @@
+pip install fastapi uvicorn pymongo python-dotenv python-jose passlib[bcrypt]
