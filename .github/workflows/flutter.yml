@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: mobile_app   # 👈 set default working dir for all run: commands
+        working-directory: mobile_app   # 👈 all run steps are inside mobile_app/
 
     steps:
       # 1. Checkout source code
@@ -41,5 +41,5 @@ jobs:
         with:
           name: flutter-builds
           path: |
-            mobile_app/build/app/outputs/flutter-apk/app-release.apk
-            mobile_app/build/app/outputs/bundle/release/app-release.aab
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
