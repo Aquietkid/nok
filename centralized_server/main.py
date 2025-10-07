@@ -5,7 +5,7 @@ import uvicorn
 
 from middlewares.error_handler import error_handler
 from middlewares.auth_middleware import verify_token
-from routes import auth_routes
+from routes import  detection_routes
 
 load_dotenv()
 
@@ -24,7 +24,8 @@ async def root():
         "docs": "/docs"
     }
 
-app.include_router(auth_routes.router, prefix="/api/auth", tags=["Auth"])
+# app.include_router(auth_routes.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(detection_routes.router, prefix="/api/detect", tags=["Detect"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=True)

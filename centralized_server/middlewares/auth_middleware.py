@@ -10,6 +10,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 async def verify_token(request: Request, call_next):
+    return await call_next(request)
     if request.url.path.startswith("/api/auth"): 
         return await call_next(request)
 
