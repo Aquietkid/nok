@@ -42,16 +42,16 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() {
       _isLoading = true;
     });
-    bool success = await api.signIn(
+    bool? success = await api.signIn(
       _emailController.text,
       _passwordController.text,
     );
     setState(() {
       _isLoading = false;
     });
-    if (success) {
+    print("success $success");
+    if (success != null) {
       Navigator.pushReplacementNamed(context, '/home');
-      // TODO: redirect to home screen
     }
   }
 

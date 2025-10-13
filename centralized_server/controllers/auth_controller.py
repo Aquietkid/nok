@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from passlib.hash import bcrypt
 from config.jwt import *
 
+
 async def register_user(request: Request):
     data = await request.json()
     email = data.get("email")
@@ -39,6 +40,5 @@ async def login_user(request: Request):
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
     response = JSONResponse(
-        content={"success": True, "message": "Login successful"})
-    response.headers["Authorization"] = f"Bearer {token}"
+        content={"success": True, "data": {"token": token}})
     return response
