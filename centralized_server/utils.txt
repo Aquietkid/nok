@@ -1,1 +1,1 @@
-pip install fastapi uvicorn pymongo python-dotenv python-jose passlib[bcrypt] insightface onnxruntime python-multipart
+pip install fastapi uvicorn pymongo python-dotenv python-jose passlib[bcrypt] insightface onnxruntime python-multipart boto3
