@@ -1,17 +1,11 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from database import db
-import os
 from jose import jwt
 from datetime import datetime, timedelta
 from passlib.hash import bcrypt
-from dotenv import load_dotenv
+from config.jwt import *
 
-load_dotenv()
-
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-JWT_EXP_HOURS = int(os.getenv("JWT_EXP_HOURS", 1))
 
 async def register_user(request: Request):
     data = await request.json()
@@ -29,6 +23,7 @@ async def register_user(request: Request):
 
     return JSONResponse(content={"success": True, "message": "User registered successfully"})
 
+
 async def login_user(request: Request):
     data = await request.json()
     email = data.get("email")
@@ -39,11 +34,11 @@ async def login_user(request: Request):
         return JSONResponse(status_code=401, content={"success": False, "message": "Invalid credentials"})
 
     payload = {
-        "sub": email,
+        "_id": str(user.get("_id")),
         "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS)
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-    response = JSONResponse(content={"success": True, "message": "Login successful"})
-    response.headers["Authorization"] = f"Bearer {token}" 
+    response = JSONResponse(
+        content={"success": True, "data": {"token": token}})
     return response

@@ -44,7 +44,7 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
     final newPerson = Person(
       name: _nameController.text,
       // For now, just storing file paths. Later you’ll replace this with uploaded URLs.
-      images: _images.map((file) => file!.path).toList(),
+      image: "_images.first()",
     );
 
     Navigator.pop(context, newPerson);
