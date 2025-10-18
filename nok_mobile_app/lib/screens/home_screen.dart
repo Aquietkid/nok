@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nok_mobile_app/models/person.dart';
 import 'package:nok_mobile_app/services/api_service.dart';
 import 'person_detail_screen.dart';
 import 'add_person_screen.dart';
@@ -10,13 +11,6 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class Person {
-  final String name;
-  final String image;
-
-  Person({required this.name, required this.image});
 }
 
 class _HomeScreenState extends State<HomeScreen> {

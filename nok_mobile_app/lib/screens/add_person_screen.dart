@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nok_mobile_app/models/person.dart';
 import 'home_screen.dart';
 
 class AddPersonScreen extends StatefulWidget {

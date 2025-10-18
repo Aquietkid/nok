@@ -49,7 +49,6 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() {
       _isLoading = false;
     });
-    print("success $success");
     if (success != null) {
       Navigator.pushReplacementNamed(context, '/home');
     }
