@@ -5,6 +5,7 @@ from jose import jwt
 from datetime import datetime, timedelta
 from passlib.hash import bcrypt
 from config.jwt import *
+from bson import ObjectId
 
 
 async def register_user(request: Request):
@@ -38,7 +39,26 @@ async def login_user(request: Request):
         "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS)
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    
+    user["_id"] = str(user["_id"])
+    user.pop("password", None)
 
     response = JSONResponse(
-        content={"success": True, "data": {"token": token}})
+        content={"success": True, "data": {"token": token, "user": user}})
+    return response
+
+
+async def authenticate(request: Request):
+    user_id = request.state._id
+
+    user = db.users.find_one({"_id": ObjectId(user_id)})
+    
+    if not user:
+        return JSONResponse(content={"success": False, "error": "User not found"}, status_code=404)
+    
+    user["_id"] = str(user["_id"])
+    user.pop("password", None)
+
+    response = JSONResponse(
+        content={"success": True, "data": {"user": user}})
     return response

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
+import 'package:nok_mobile_app/models/person.dart';
 
 class PersonDetailScreen extends StatelessWidget {
   final Person person;
