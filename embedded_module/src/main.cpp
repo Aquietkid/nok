@@ -1,26 +1,29 @@
-#include <WiFi.h>
-#include <WiFiClient.h>
+#include <ArduinoJson.h>
+#include <ESP32Servo.h>
 #include <HTTPClient.h>
 #include <WebServer.h>
-#include <ESP32Servo.h>
-#include <ArduinoJson.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
 
-//function headers
+// function headers
 void setup();
 void loop();
 void sendRequestAndControlServo();
 
 // WiFi credentials
-const char* ssid = "111 Jinnah ";
-const char* password = "ManaManayManiMano";
+// const char *ssid = "POCO X3 Pro";
+// const char *password = "HelloWorlds";
 
-// External API endpoint (dummy for now)
-const char* apiURL = "http://192.168.1.9:5000/check"; // replace with your PC IP
+const char *ssid = "111 Jinnah ";
+const char *password = "ManaManayManiMano";
+
+const char *apiURL =
+    "http://192.168.1.11:5000/check"; // replace with your PC IP
 Servo doorServo;
 const int servoPin = 18;
 const int buzzerPin = 19;
-const int lockedPosition = 0;
-const int unlockedPosition = 90;
+const int lockedPosition = 120;
+const int unlockedPosition = 0;
 
 const int buttonPin = 4;
 unsigned long lastPress = 0;
@@ -47,7 +50,7 @@ void setup() {
 
 void loop() {
   if (digitalRead(buttonPin) == LOW) {
-    digitalWrite(buzzerPin, HIGH);  // Buzzer on
+    digitalWrite(buzzerPin, HIGH); // Buzzer on
     unsigned long now = millis();
     if (now - lastPress > cooldown) {
       lastPress = now;
@@ -55,7 +58,7 @@ void loop() {
       sendRequestAndControlServo();
     }
   } else {
-    digitalWrite(buzzerPin, LOW);   // Buzzer off
+    digitalWrite(buzzerPin, LOW); // Buzzer off
   }
 }
 
@@ -74,7 +77,7 @@ void sendRequestAndControlServo() {
       DeserializationError error = deserializeJson(doc, payload);
 
       if (!error) {
-        const char* result = doc["result"];  // "yes" or "no"
+        const char *result = doc["result"]; // "yes" or "no"
         if (strcmp(result, "yes") == 0) {
           doorServo.write(unlockedPosition);
           Serial.println("Servo -> UNLOCK");
