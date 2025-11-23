@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:nok_mobile_app/services/api_service.dart';
 
@@ -46,12 +47,26 @@ class _SignInScreenState extends State<SignInScreen> {
       _emailController.text,
       _passwordController.text,
     );
+
+    if (success != null) {
+      late FirebaseMessaging messaging;
+
+      messaging = FirebaseMessaging.instance;
+      messaging.getToken().then((token) {
+        print("fcm_token: $token");
+        if (token != null) {
+          api.saveFCMToken(token);
+        }
+      });
+
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.pushReplacementNamed(context, '/home');
+    }
     setState(() {
       _isLoading = false;
     });
-    if (success != null) {
-      Navigator.pushReplacementNamed(context, '/home');
-    }
   }
 
   void _goToSignUp() {
