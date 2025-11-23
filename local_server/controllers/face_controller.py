@@ -40,13 +40,19 @@ def process_faces():
     cap.release()
 
     # Prepare files for POST request
-    files = [(f"image{i+1}", ("frame.jpg", f.getvalue(), "image/jpeg")) for i, f in enumerate(captured_frames)]
+    files = [(f"images", ("frame.jpg", f.getvalue(), "image/jpeg")) for i, f in enumerate(captured_frames)]
 
     try:
-        resp = requests.post("http://13.61.32.214:8000/detect", files=files, timeout=15)
+        resp = requests.post("http://13.60.56.52:8000/api/detect/detect", files=files, timeout=15)
+        # resp = requests.post("http://localhost:8000/api/detect/detect", files=files, timeout=15)
         last_request_time = time.time()
-        print(resp.json())
-        return resp.json()
+        response = resp.json()
+        print("Response: ", response)
+        if response['match']:
+            return {"result": "yes"}
+        # return resp.json()
     except Exception as e:
         print("Error")
         return {"error": f"Failed to contact detection API: {str(e)}"}
+
+    return {"result": "no"}
