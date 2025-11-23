@@ -88,4 +88,23 @@ class ApiService {
     );
     return response.data;
   }
+
+  Future<bool?> saveFCMToken(String fcm_token) async {
+    final token = await Storage.getToken();
+
+    final response = await apiHandler<Future<bool>>(
+      () => http.post(
+        Uri.parse("$baseUrl/api/fcm/save_fcm"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({"token": fcm_token}),
+      ),
+      (_data) async {
+        return true;
+      },
+    );
+    return response.data;
+  }
 }
