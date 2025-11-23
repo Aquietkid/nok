@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "381123933733",
+    "project_id": "nok-app-b6a16",
+    "storage_bucket": "nok-app-b6a16.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381123933733:android:1a2d7f564a42e562afb1cc",
+        "android_client_info": {
+          "package_name": "com.example.nok_mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh_z8wDwM1k2k2y615hluesEwjTN93QAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

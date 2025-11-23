@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nok_mobile_app/models/person.dart';
 import 'home_screen.dart';
 
 class AddPersonScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
     final newPerson = Person(
       name: _nameController.text,
       // For now, just storing file paths. Later you’ll replace this with uploaded URLs.
-      images: _images.map((file) => file!.path).toList(),
+      image: "_images.first()",
     );
 
     Navigator.pop(context, newPerson);

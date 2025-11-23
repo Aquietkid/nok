@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:nok_mobile_app/services/api_service.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -10,8 +12,10 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final api = ApiService();
   bool isButtonEnabled = false;
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   void _checkFields() {
     setState(() {
@@ -35,11 +39,34 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  void _signIn() {
-    // TODO: Add your sign in logic here
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Signing in...")));
+  void _signIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+    bool? success = await api.signIn(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (success != null) {
+      late FirebaseMessaging messaging;
+
+      messaging = FirebaseMessaging.instance;
+      messaging.getToken().then((token) {
+        print("fcm_token: $token");
+        if (token != null) {
+          api.saveFCMToken(token);
+        }
+      });
+
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _goToSignUp() {
@@ -48,6 +75,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isFieldsDisabled = _isLoading;
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -80,18 +109,31 @@ class _SignInScreenState extends State<SignInScreen> {
                           ? Icons.visibility_off
                           : Icons.visibility,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
+                    onPressed:
+                        isFieldsDisabled
+                            ? null
+                            : () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
                   ),
                 ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: isButtonEnabled ? _signIn : null,
-                child: const Text("Sign In"),
+                child:
+                    _isLoading
+                        ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                        : const Text("Sign In"),
               ),
               const SizedBox(height: 16),
               GestureDetector(

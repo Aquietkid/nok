@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nok_mobile_app/models/person.dart';
+import 'package:nok_mobile_app/services/api_service.dart';
 import 'person_detail_screen.dart';
 import 'add_person_screen.dart';
 
@@ -11,37 +13,26 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class Person {
-  final String name;
-  final List<String> images;
-
-  Person({required this.name, required this.images});
-}
-
 class _HomeScreenState extends State<HomeScreen> {
-  List<Person> persons = [
-    Person(
-      name: "John Doe",
-      images: [
-        "https://picsum.photos/id/101/300/300",
-        "https://picsum.photos/id/102/300/300",
-        "https://picsum.photos/id/103/300/300",
-      ],
-    ),
-    Person(
-      name: "Jane Smith",
-      images: [
-        "https://picsum.photos/id/104/300/300",
-        "https://picsum.photos/id/105/300/300",
-        "https://picsum.photos/id/106/300/300",
-      ],
-    ),
-  ];
+  List<Person> persons = [];
 
   void _addPerson(Person person) {
     setState(() {
-      persons.add(person);
+      // persons.add(person);
     });
+  }
+
+  void fetchData() async {
+    final fetchedPersons = await ApiService().getAllPerson();
+    setState(() {
+      persons = fetchedPersons;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
   }
 
   @override
@@ -75,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Stack(
                 children: [
                   Image.network(
-                    person.images.first,
+                    person.image,
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,

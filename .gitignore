@@ -10,3 +10,4 @@ __pycache__/
 .env
 *.env
 local_server/yolov8n-face-lindevs.pt
+serviceAccountKey.json
