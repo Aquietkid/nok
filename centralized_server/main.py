@@ -4,9 +4,11 @@ from fastapi import FastAPI
 import config.firebase
 import uvicorn
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from middlewares.error_handler import error_handler
 from middlewares.auth_middleware import verify_token
-from routes import auth_routes, person_routes, fcm_routes
+from routes import auth_routes, person_routes, fcm_routes, detection_routes, outstanding_request_routes
 from utils.notification import send_notification, NotificationRequest
 
 load_dotenv()
@@ -14,6 +16,14 @@ load_dotenv()
 PORT = int(os.getenv("PORT", 8000))
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["127.0.0.1:5500"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
@@ -29,7 +39,8 @@ app.middleware("http")(error_handler)
 app.middleware("http")(verify_token)
 
 app.include_router(auth_routes.router, prefix="/api/auth", tags=["Auth"])
-# app.include_router(detection_routes.router, prefix="/api/detect", tags=["Detect"])
+app.include_router(detection_routes.router, prefix="/api/detect", tags=["Detect"])
+app.include_router(outstanding_request_routes.router, prefix="/api/polling", tags=["Polling"])
 app.include_router(person_routes.router, prefix="/api/person", tags=["Person"])
 app.include_router(fcm_routes.router, prefix="/api/fcm", tags=["FCM"])
 
