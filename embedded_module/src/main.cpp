@@ -1,40 +1,41 @@
-#include <WiFi.h>
-#include <WiFiClient.h>
+#include <ArduinoJson.h>
+#include <ESP32Servo.h>
 #include <HTTPClient.h>
 #include <WebServer.h>
-#include <ESP32Servo.h>
-#include <ArduinoJson.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
 
-//function headers
 void setup();
 void loop();
 void sendRequestAndControlServo();
 
-// WiFi credentials
-const char* ssid = "111 Jinnah ";
-const char* password = "ManaManayManiMano";
+const char *ssid = "POCO X3 Pro";
+const char *password = "HelloWorlds";
+const char *apiURL = "http://10.126.43.213:5000/check";
 
-// External API endpoint (dummy for now)
-const char* apiURL = "http://192.168.1.9:5000/check"; // replace with your PC IP
+// const char *ssid = "111 Jinnah "; 
+// const char *password = "ManaManayManiMano"; 
+// const char *apiURL = "http://192.168.1.11:5000/check"; // home wifi
+
 Servo doorServo;
 const int servoPin = 18;
 const int buzzerPin = 19;
-const int lockedPosition = 0;
-const int unlockedPosition = 90;
-
+const int lockedPosition = 120;
+const int unlockedPosition = 0;
 const int buttonPin = 4;
+
 unsigned long lastPress = 0;
-const unsigned long cooldown = 2000; // ms
+const unsigned long cooldown = 2000;
+unsigned long unlockTime = 0;
+bool isUnlocked = false;
 
 void setup() {
   Serial.begin(115200);
-
   doorServo.attach(servoPin);
   doorServo.write(lockedPosition);
 
   pinMode(buttonPin, INPUT_PULLUP);
   pinMode(buzzerPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP); // Button pressed = LOW
 
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
@@ -47,7 +48,7 @@ void setup() {
 
 void loop() {
   if (digitalRead(buttonPin) == LOW) {
-    digitalWrite(buzzerPin, HIGH);  // Buzzer on
+    digitalWrite(buzzerPin, HIGH);
     unsigned long now = millis();
     if (now - lastPress > cooldown) {
       lastPress = now;
@@ -55,7 +56,13 @@ void loop() {
       sendRequestAndControlServo();
     }
   } else {
-    digitalWrite(buzzerPin, LOW);   // Buzzer off
+    digitalWrite(buzzerPin, LOW);
+  }
+
+  if (isUnlocked && millis() - unlockTime >= 10000) {
+    doorServo.write(lockedPosition);
+    isUnlocked = false;
+    Serial.println("Auto-locked after 10s");
   }
 }
 
@@ -69,17 +76,19 @@ void sendRequestAndControlServo() {
       String payload = http.getString();
       Serial.println("Response: " + payload);
 
-      // Parse JSON
       StaticJsonDocument<200> doc;
       DeserializationError error = deserializeJson(doc, payload);
 
       if (!error) {
-        const char* result = doc["result"];  // "yes" or "no"
+        const char *result = doc["result"];
         if (strcmp(result, "yes") == 0) {
           doorServo.write(unlockedPosition);
-          Serial.println("Servo -> UNLOCK");
+          unlockTime = millis();
+          isUnlocked = true;
+          Serial.println("Servo -> UNLOCK (auto-lock in 10s)");
         } else {
           doorServo.write(lockedPosition);
+          isUnlocked = false;
           Serial.println("Servo -> LOCK");
         }
       } else {
