@@ -6,7 +6,7 @@ import uvicorn
 
 from middlewares.error_handler import error_handler
 from middlewares.auth_middleware import verify_token
-from routes import auth_routes, person_routes, fcm_routes
+from routes import auth_routes, person_routes, fcm_routes, outstanding_request_routes
 from utils.notification import send_notification, NotificationRequest
 
 load_dotenv()
@@ -32,6 +32,7 @@ app.include_router(auth_routes.router, prefix="/api/auth", tags=["Auth"])
 # app.include_router(detection_routes.router, prefix="/api/detect", tags=["Detect"])
 app.include_router(person_routes.router, prefix="/api/person", tags=["Person"])
 app.include_router(fcm_routes.router, prefix="/api/fcm", tags=["FCM"])
+app.include_router(outstanding_request_routes.router, prefix="/api/outstanding-request", tags=["Outstanding Request"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=True)
