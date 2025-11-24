@@ -10,7 +10,7 @@ def verify_person(reference_paths, test_images, threshold=0.4, show_results=True
     if not reference_paths:
         raise ValueError("No reference images provided.")
 
-    app = insightface.app.FaceAnalysis(name="buffalo_l")
+    app = insightface.app.FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
     app.prepare(ctx_id=0)
 
     def get_embedding(img_path):
