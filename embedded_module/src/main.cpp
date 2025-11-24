@@ -8,6 +8,8 @@
 void setup();
 void loop();
 void sendRequestAndControlServo();
+void handleOpen();
+void handleClose();
 
 const char *ssid = "POCO X3 Pro";
 const char *password = "HelloWorlds";
@@ -29,6 +31,33 @@ const unsigned long cooldown = 2000;
 unsigned long unlockTime = 0;
 bool isUnlocked = false;
 
+WebServer server(80);
+
+void handleOpen() {
+  doorServo.write(unlockedPosition);
+  isUnlocked = true;
+  unlockTime = millis();
+
+  StaticJsonDocument<100> doc;
+  doc["status"] = "opened";
+
+  String res;
+  serializeJson(doc, res);
+  server.send(200, "application/json", res);
+}
+
+void handleClose() {
+  doorServo.write(lockedPosition);
+  isUnlocked = false;
+
+  StaticJsonDocument<100> doc;
+  doc["status"] = "closed";
+
+  String res;
+  serializeJson(doc, res);
+  server.send(200, "application/json", res);
+}
+
 void setup() {
   Serial.begin(115200);
   doorServo.attach(servoPin);
@@ -44,11 +73,17 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("\nConnected! IP: " + WiFi.localIP().toString());
+
+  server.on("/open", HTTP_GET, handleOpen);
+  server.on("/close", HTTP_GET, handleClose);
+  server.begin();
 }
 
 void loop() {
+  server.handleClient();
+
   if (digitalRead(buttonPin) == LOW) {
-    digitalWrite(buzzerPin, HIGH);
+    // digitalWrite(buzzerPin, HIGH);
     unsigned long now = millis();
     if (now - lastPress > cooldown) {
       lastPress = now;

@@ -24,7 +24,7 @@ async def register_user(request: Request):
 
     payload = {
         "_id": str(user.get("_id")),
-        "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS)
+        # "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS)
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -42,7 +42,7 @@ async def login_user(request: Request):
 
     payload = {
         "_id": str(user.get("_id")),
-        "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS)
+        # "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS)
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     
