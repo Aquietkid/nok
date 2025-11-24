@@ -22,7 +22,13 @@ async def register_user(request: Request):
     hashed_password = bcrypt.hash(password)
     db.users.insert_one({"email": email, "password": hashed_password})
 
-    return JSONResponse(content={"success": True, "message": "User registered successfully"})
+    payload = {
+        "_id": str(user.get("_id")),
+        "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS)
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+    return JSONResponse(content={"success": True, "message": "User registered successfully", "data": token})
 
 
 async def login_user(request: Request):

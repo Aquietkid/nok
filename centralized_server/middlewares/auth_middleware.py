@@ -4,9 +4,18 @@ from jose import jwt
 from config.jwt import *
 
 async def verify_token(request: Request, call_next):
-    if not request.url.path.startswith("/api/auth/authenticate"):
-        if request.url.path.startswith("/api/auth"):
-            return await call_next(request)
+
+    if request.method == "OPTIONS":
+        return await call_next(request)
+
+    # if not request.url.path.startswith("/api/auth/authenticate"):
+        # if request.url.path.startswith("/api/auth"):
+            # return await call_next(request)
+
+    path = request.url.path
+
+    if path.startswith("/api/auth"):
+        return await call_next(request)
 
     token = request.headers.get("Authorization")
     if not token or not token.startswith("Bearer "):
@@ -16,6 +25,7 @@ async def verify_token(request: Request, call_next):
         token = token.replace("Bearer ", "").strip()
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("_id")
+
 
         if not user_id:
             return JSONResponse(status_code=401, content={
