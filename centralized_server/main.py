@@ -36,6 +36,7 @@ app.add_middleware(
 async def root():
     # send_notification(NotificationRequest(
     #     body="This is a test notification", title="Testing Ding Dong!", token="e1RfKhJOQ7GZkztLR_2FNI:APA91bHSeeU5VUCmlof2M2llKc1vrDt393Ta3DshGH51KiJZLInKOQXaWdJ54Gm26XXUFupGDBzah-z3creO07OFaxfkgTOXetvgwaPJUXogv_mUaQQ15-Y"))
+    print("Hello from root endpoint!")
     return {
         "success": True,
         "message": f"🚀 Centralized Server is running on port {PORT}",
