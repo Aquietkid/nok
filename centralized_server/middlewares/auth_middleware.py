@@ -19,7 +19,10 @@ async def verify_token(request: Request, call_next):
     try:
         token = token.replace("Bearer ", "").strip()
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = payload.get("_id")
+        # user_id = payload.get("_id")
+        user = payload.get("user", {})
+        user_id = user.get("_id")
+
 
         if not user_id:
             return JSONResponse(status_code=401, content={
