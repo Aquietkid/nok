@@ -5,6 +5,8 @@ import tempfile
 import os
 
 from utils.insight_face_script import verify_person
+from utils.outstanding_requests import add_outstanding_req
+from utils.notification import send_notification
 
 
 # Reference images folder (for now, local)
@@ -50,6 +52,8 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
             }
         )
     except Exception as e:
+        send_notification(NotificationRequest(token="", title="Someone is at the door", body="Click here to see who's there"))
+        add_outstanding_req(local_server_user_id="", request=OutstandingRequest(images=images, status='pending'))
         return JSONResponse(content={"success": False, "error": str(e)}, status_code=500)
     finally:
         # cleanup tmp images
