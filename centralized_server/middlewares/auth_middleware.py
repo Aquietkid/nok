@@ -4,6 +4,10 @@ from jose import jwt
 from config.jwt import *
 
 async def verify_token(request: Request, call_next):
+
+    if request.method == "OPTIONS":
+        return await call_next(request)
+
     if not request.url.path.startswith("/api/auth/authenticate"):
         if request.url.path.startswith("/api/auth"):
             return await call_next(request)
