@@ -10,6 +10,10 @@ async def add_person(request: Request, name: str = Form(...), picture: UploadFil
     if not _id:
         return JSONResponse({"error": "Missing user ID"}, status_code=401)
 
+    # Log received data
+    print("Received name:", name)
+    print("Received picture:", picture.filename if picture else None)
+    
     # Upload picture to S3
     image_url = None
     if picture:
