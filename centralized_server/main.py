@@ -53,6 +53,7 @@ app.include_router(
 )
 app.include_router(person_routes.router, prefix="/api/person", tags=["Person"])
 app.include_router(fcm_routes.router, prefix="/api/fcm", tags=["FCM"])
+app.include_router(outstanding_request_routes.router, prefix="/api/outstanding-request", tags=["Outstanding Request"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=True)

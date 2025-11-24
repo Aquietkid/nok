@@ -1,6 +1,6 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from database import db
+import json
 from config.jwt import *
 from bson import ObjectId
 from utils.outstanding_requests import *
@@ -23,9 +23,12 @@ async def getAll(request: Request):
 
     outstanding_req = get_outstanding_requests(user_id)
 
-    response = JSONResponse(
-        content={"success": True, "data": outstanding_req})
+    serialized_reqs = [
+        json.loads(req.model_dump_json()) for req in outstanding_req
+    ]
 
+    response = JSONResponse(
+        content={"success": True, "data": serialized_reqs})
     return response
 
 

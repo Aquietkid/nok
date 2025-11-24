@@ -3,4 +3,5 @@ from controllers.outstanding_request_controller import *
 
 router = APIRouter()
 
-router.post("/register")(add)
+router.get("/all")(getAll)
+router.put("/update-status")(update_status)
