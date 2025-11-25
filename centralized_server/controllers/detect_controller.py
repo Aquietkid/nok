@@ -43,10 +43,13 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
         result = verify_person(
             REFERENCE_PATHS, test_image_paths, threshold=0.5, show_results=False)
 
-        if(not result):
+        request_id = None
+
+        if (not result):
             user_id = request.state._id
             # send_notification(NotificationRequest(token="", title="Someone is at the door", body="Click here to see who's there"))
-            add_outstanding_req(local_server_user_id=user_id, request=OutstandingRequest(images=[], status='pending', timestamp=(datetime.utcnow() + timedelta(weeks=10,seconds=60))))
+            request_id = add_outstanding_req(local_server_user_id=user_id, request=OutstandingRequest(
+                images=[], status='pending', timestamp=(datetime.utcnow() + timedelta(weeks=10, seconds=60))))
 
         # For confidence, we can slightly modify verify_person to return similarity instead of just True/False
         # But since you said interface must remain same, let's simulate:
@@ -54,7 +57,8 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
         return JSONResponse(
             content={
                 "success": True,
-                "match": result
+                "match": result,
+                "request_id": request_id
             }
         )
     except Exception as e:
