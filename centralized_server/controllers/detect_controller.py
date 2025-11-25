@@ -5,7 +5,7 @@ import tempfile
 import os
 
 from utils.insight_face_script import verify_person
-from utils.outstanding_requests import add_outstanding_req
+from utils.outstanding_requests import add_outstanding_req, OutstandingRequest
 from utils.notification import send_notification
 
 
