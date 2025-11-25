@@ -5,14 +5,19 @@ from ultralytics import YOLO
 import insightface
 from io import BytesIO
 import os
+import json
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-POLLING_API =  "http://13.60.56.52/api/polling/register"
+BASE_API = "http://13.60.56.52:8000"
+POLLING_ENDPOINT =  "/api/outstanding-request/get-request"
+DETECT_ENDPOINT = "/api/detect/detect"
+ESP32_API = "http://10.167.113.3/open"
 
-model = YOLO("local_server/yolov8n-face-lindevs.pt")
+
+model = YOLO("yolov8n-face-lindevs.pt")
 
 face_app = insightface.app.FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
 face_app.prepare(ctx_id=0)
@@ -20,20 +25,32 @@ face_app.prepare(ctx_id=0)
 last_request_time = 0  # cooldown timer
 polling_active = False
 
-def start_polling():
+headers = {
+    "Authorization": f"Bearer {os.getenv("BEARER")}"
+}
+
+def start_polling(request_id: str):
     global polling_active
     polling_active = True
     start_time = time.time()
 
+    print(time.time() - start_time )
+
     while time.time() - start_time < 120:
+        print("Inside loop")
         try:
-            r = requests.get(POLLING_API, timeout=5)
+            r = requests.post(f"{BASE_API}{POLLING_ENDPOINT}", json={"request_id": request_id}, timeout=10, headers=headers)
             data = r.json()
-            if data.get("true") is True:
+            data = data.get("data")
+            print(f"Data: {data}")
+            print(f"Status: {data.get("status")}")
+            if data.get("status") == "approved":
                 print("Calling ESP32 API here")
-                requests.post("http://10.126.43.3/open", timeout=10)
+                requests.get(ESP32_API, timeout=10)
                 polling_active = False
                 return {"result": "success"}
+            elif data.get("status") == "denied":
+                print("TODO: Delete Request")
         except:
             pass
 
@@ -83,12 +100,16 @@ def process_faces():
 
     print(headers)
 
+    request_id = None
+
     try:
-        resp = requests.post("http://13.60.56.52:8000/api/detect/detect", files=files, timeout=15, headers=headers)
+        resp = requests.post(f"{BASE_API}{DETECT_ENDPOINT}", files=files, headers=headers)
         # resp = requests.post("{base_url}/api/detect/detect", files=files, timeout=15)
         # resp = requests.post("http://localhost:8000/api/detect/detect", files=files, timeout=15, headers=headers)
         last_request_time = time.time()
         response = resp.json()
+
+        request_id = response.get("request_id")
 
         print("Response: ", response)
         
@@ -99,5 +120,7 @@ def process_faces():
         print(f"Error! Failed to contact detection API: {e}")
         return {"error": f"Failed to contact detection API: {str(e)}"}
 
-    polling_result = start_polling()
+
+    print("Starting polling")
+    polling_result = start_polling(request_id)
     return {"result": "no"}
