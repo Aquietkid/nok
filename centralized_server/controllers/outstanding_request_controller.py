@@ -1,6 +1,6 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from database import db
+import json
 from config.jwt import *
 from bson import ObjectId
 from utils.outstanding_requests import *
@@ -9,7 +9,7 @@ from utils.outstanding_requests import *
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from utils.outstanding_requests import get_outstanding_requests, update_request, remove_outstanding_req
+from utils.outstanding_requests import get_outstanding_requests, update_request, remove_outstanding_req, get_outstanding_request
 
 
 # Schema for update payload
@@ -18,16 +18,42 @@ class UpdateStatusPayload(BaseModel):
     status: str  # "approved" or "denied"
 
 
+class GetRequestPayload(BaseModel):
+    request_id: str
+
+
 async def getAll(request: Request):
     user_id = request.state._id
 
     outstanding_req = get_outstanding_requests(user_id)
 
-    response = JSONResponse(
-        content={"success": True, "data": outstanding_req})
+    serialized_reqs = [
+        json.loads(req.model_dump_json()) for req in outstanding_req
+    ]
 
+    response = JSONResponse(
+        content={"success": True, "data": serialized_reqs})
     return response
 
+
+async def getRequest(request: Request, payload: GetRequestPayload):
+    user_id = request.state._id
+    request_id = payload.request_id
+
+    outstanding_req = get_outstanding_request(user_id, request_id)
+
+    if not outstanding_req:
+        return JSONResponse(
+            content={"success": False, "message": "Request not found"},
+            status_code=404
+        )
+
+    # Serialize Pydantic model
+    serialized_req = json.loads(outstanding_req.model_dump_json())
+
+    return JSONResponse(
+        content={"success": True, "data": serialized_req}
+    )
 
 async def update_status(request: Request, payload: UpdateStatusPayload):
     user_id = request.state._id

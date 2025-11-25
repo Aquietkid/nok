@@ -3,6 +3,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:nok_mobile_app/screens/home_screen.dart';
 import 'package:nok_mobile_app/screens/outstanding_screen.dart';
+import 'package:nok_mobile_app/screens/request_detail_screen.dart';
+import 'package:nok_mobile_app/screens/request_list_screen.dart';
 import 'package:nok_mobile_app/screens/signin_screen.dart';
 import 'package:nok_mobile_app/screens/signup_screen.dart';
 import 'package:nok_mobile_app/services/api_service.dart';
@@ -94,7 +96,7 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => const HomeScreen(),
         '/signin': (context) => const SignInScreen(),
         '/signup': (context) => const SignUpScreen(),
-        '/outstanding': (context) => const OutstandingScreen(),
+        '/outstanding': (context) => const RequestsListScreen(),
       },
     );
   }

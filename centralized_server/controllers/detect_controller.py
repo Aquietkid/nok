@@ -44,7 +44,9 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
         result = verify_person(
             REFERENCE_PATHS, test_image_paths, threshold=0.5, show_results=False)
 
-        if(not result):
+        request_id = None
+
+        if (not result):
             user_id = request.state._id
 
             uploaded_urls = []
@@ -69,7 +71,8 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
         return JSONResponse(
             content={
                 "success": True,
-                "match": result
+                "match": result,
+                "request_id": request_id
             }
         )
     except Exception as e:

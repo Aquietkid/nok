@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nok_mobile_app/models/person.dart';
+import 'package:nok_mobile_app/screens/request_list_screen.dart';
 import 'package:nok_mobile_app/services/api_service.dart';
 import 'person_detail_screen.dart';
 import 'add_person_screen.dart';
@@ -89,17 +90,35 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newPerson = await Navigator.push<Person?>(
-            context,
-            MaterialPageRoute(builder: (_) => const AddPersonScreen()),
-          );
-          if (newPerson != null) {
-            _addPerson(newPerson);
-          }
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: "requestsBtn",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RequestsListScreen()),
+              );
+            },
+            child: const Icon(Icons.list_alt), // or Icons.request_page
+          ),
+          const SizedBox(height: 12),
+
+          FloatingActionButton(
+            heroTag: "addPersonBtn",
+            onPressed: () async {
+              final newPerson = await Navigator.push<Person?>(
+                context,
+                MaterialPageRoute(builder: (_) => const AddPersonScreen()),
+              );
+              if (newPerson != null) {
+                _addPerson(newPerson);
+              }
+            },
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
