@@ -43,8 +43,9 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
             REFERENCE_PATHS, test_image_paths, threshold=0.5, show_results=False)
 
         if(not result):
-            send_notification(NotificationRequest(token="", title="Someone is at the door", body="Click here to see who's there"))
-            add_outstanding_req(local_server_user_id="", request=OutstandingRequest(images=images, status='pending'))
+            user_id = request.state._id
+            # send_notification(NotificationRequest(token="", title="Someone is at the door", body="Click here to see who's there"))
+            add_outstanding_req(local_server_user_id=user_id, request=OutstandingRequest(images=[], status='pending'))
 
         # For confidence, we can slightly modify verify_person to return similarity instead of just True/False
         # But since you said interface must remain same, let's simulate:
