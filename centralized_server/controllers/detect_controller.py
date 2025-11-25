@@ -40,7 +40,11 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
     try:
         # Call your existing function
         result = verify_person(
-            REFERENCE_PATHS, test_image_paths, threshold=0.4, show_results=False)
+            REFERENCE_PATHS, test_image_paths, threshold=0.5, show_results=False)
+
+        if(not result):
+            send_notification(NotificationRequest(token="", title="Someone is at the door", body="Click here to see who's there"))
+            add_outstanding_req(local_server_user_id="", request=OutstandingRequest(images=images, status='pending'))
 
         # For confidence, we can slightly modify verify_person to return similarity instead of just True/False
         # But since you said interface must remain same, let's simulate:
@@ -52,8 +56,6 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
             }
         )
     except Exception as e:
-        send_notification(NotificationRequest(token="", title="Someone is at the door", body="Click here to see who's there"))
-        add_outstanding_req(local_server_user_id="", request=OutstandingRequest(images=images, status='pending'))
         return JSONResponse(content={"success": False, "error": str(e)}, status_code=500)
     finally:
         # cleanup tmp images
