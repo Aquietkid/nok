@@ -1,6 +1,10 @@
 import boto3, uuid, mimetypes, os
 from botocore.exceptions import NoCredentialsError
 from config.aws import *
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
+
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -26,6 +30,7 @@ def upload_image_to_s3(file):
         )
         return f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}"
     except NoCredentialsError:
+        print("ERROR! S3 credentials not configured correctly")
         raise Exception("S3 credentials not configured correctly")
 
 

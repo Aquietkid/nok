@@ -10,7 +10,7 @@ class OutstandingRequest(BaseModel):
     request_id: str = Field(default_factory=lambda: str(
         uuid.uuid4()), description="Unique ID for the request")
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow, description="Time when request was created")
+        default_factory=datetime.utcnow(), description="Time when request was created")
     images: List[str] = Field(..., description="List of image URLs")
     status: str = Field(
         "pending", description="Status of the request, e.g., 'pending', 'approved', 'denied'")
@@ -39,7 +39,7 @@ def remove_outstanding_req(local_server_user_id: str, request_id: str):
                 for url in r.images:
                     delete_image_from_s3(url)
                 break
-            
+
         # Keep only requests that do not match the request_id
         remaining_requests = [
             r for r in requests if r.request_id != request_id]

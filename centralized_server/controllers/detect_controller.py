@@ -49,11 +49,15 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
         if (not result):
             user_id = request.state._id
 
+            print("Uploading images to S3")
+
             uploaded_urls = []
             for path in test_image_paths:
                 url = await upload_to_s3(path)
+                print(f"Image uploaded to: {url}")
                 uploaded_urls.append(url)
 
+            print("Adding outstanding request")
             add_outstanding_req(
                 local_server_user_id=user_id,
                 request=OutstandingRequest(
