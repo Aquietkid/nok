@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 import uuid
 
-from utils.s3_utils import delete_image_from_s3
+from utils.s3 import delete_image_from_s3
 
 
 class OutstandingRequest(BaseModel):
