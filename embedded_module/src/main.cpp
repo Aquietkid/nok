@@ -13,7 +13,7 @@ void handleClose();
 
 const char *ssid = "POCO X3 Pro";
 const char *password = "HelloWorlds";
-const char *apiURL = "http://10.126.43.213:5000/check";
+const char *apiURL = "http://10.167.113.213:5000/check";
 
 // const char *ssid = "111 Jinnah "; 
 // const char *password = "ManaManayManiMano"; 
@@ -83,7 +83,7 @@ void loop() {
   server.handleClient();
 
   if (digitalRead(buttonPin) == LOW) {
-    // digitalWrite(buzzerPin, HIGH);
+    digitalWrite(buzzerPin, HIGH);
     unsigned long now = millis();
     if (now - lastPress > cooldown) {
       lastPress = now;
@@ -105,6 +105,7 @@ void sendRequestAndControlServo() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin(apiURL);
+    http.setTimeout(60000); // 60 seconds
     int httpCode = http.GET();
 
     if (httpCode == 200) {
