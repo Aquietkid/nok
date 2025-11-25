@@ -3,6 +3,8 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 import uuid
 
+from utils.s3_utils import delete_image_from_s3
+
 
 class OutstandingRequest(BaseModel):
     request_id: str = Field(default_factory=lambda: str(
@@ -31,6 +33,13 @@ def add_outstanding_req(local_server_user_id: str, request: OutstandingRequest):
 def remove_outstanding_req(local_server_user_id: str, request_id: str):
     if local_server_user_id in outstanding_requests:
         requests = outstanding_requests[local_server_user_id]
+
+        for r in requests:
+            if r.request_id == request_id:
+                for url in r.images:
+                    delete_image_from_s3(url)
+                break
+            
         # Keep only requests that do not match the request_id
         remaining_requests = [
             r for r in requests if r.request_id != request_id]
