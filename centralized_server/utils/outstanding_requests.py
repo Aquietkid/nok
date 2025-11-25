@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional
 from pydantic import BaseModel, Field
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 import uuid
 
 
@@ -45,6 +45,15 @@ def remove_outstanding_req(local_server_user_id: str, request_id: str):
 def get_outstanding_requests(local_server_user_id: str) -> List[OutstandingRequest]:
     return outstanding_requests.get(local_server_user_id, [])
 
+
+def get_outstanding_request(local_server_user_id: str, request_id: str) -> OutstandingRequest | None:
+    all_requests = outstanding_requests.get(local_server_user_id, [])
+
+    for req in all_requests:
+        if req.request_id == request_id:
+            return req
+
+    return None
 
 # Update a specific request by request_id
 def update_request(local_server_user_id: str, request_id: str, status: str) -> bool:
