@@ -51,11 +51,17 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
 
             print("Uploading images to S3")
 
+            # uploaded_urls = []
+            # for path in test_image_paths:
+            #     url = await upload_image_to_s3(path)
+            #     print(f"Image uploaded to: {url}")
+            #     uploaded_urls.append(url)
+
             uploaded_urls = []
-            for path in test_image_paths:
-                url = await upload_image_to_s3(path)
-                print(f"Image uploaded to: {url}")
+            for img in images:
+                url = await upload_image_to_s3(img)
                 uploaded_urls.append(url)
+
 
             print("Adding outstanding request")
             add_outstanding_req(
