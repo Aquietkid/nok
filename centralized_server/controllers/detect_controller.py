@@ -59,6 +59,7 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
 
             uploaded_urls = []
             for img in images:
+                img.file.seek(0)
                 url = await upload_image_to_s3(img)
                 uploaded_urls.append(url)
 
