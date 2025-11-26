@@ -3,6 +3,7 @@ from botocore.exceptions import NoCredentialsError
 from config.aws import *
 from dotenv import load_dotenv
 
+
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 
@@ -34,7 +35,7 @@ s3 = boto3.client(
 #         raise Exception("S3 credentials not configured correctly")
 
 def upload_image_to_s3(file):
-    import mimetypes, uuid
+
     content_type = file.content_type or "image/jpeg"
     file_ext = mimetypes.guess_extension(content_type) or ".jpg"
     filename = f"{uuid.uuid4()}{file_ext}"
@@ -51,6 +52,7 @@ def upload_image_to_s3(file):
         raise
 
     return f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}"
+
 
 
 
