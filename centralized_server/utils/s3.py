@@ -47,7 +47,7 @@ def upload_image_to_s3(file):
     try:
         print("Initiating upload image to S3")
         s3.upload_fileobj(
-            file,
+            file.file,
             BUCKET_NAME,
             filename,
             ExtraArgs={"ContentType": content_type}
@@ -56,7 +56,7 @@ def upload_image_to_s3(file):
         print(f"Error uploading to S3: {e}")
         raise
 
-    return f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
+    return f"https://{BUCKET_NAME}.s3.{REGION_NAME}.amazonaws.com/{filename}"
 
 
 def delete_image_from_s3(image_url: str):
