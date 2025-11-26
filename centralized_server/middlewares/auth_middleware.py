@@ -33,7 +33,7 @@ async def verify_token(request: Request, call_next):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("_id")
 
-        print(f"JWT Extracted. \nToken: {token}\nPaylaod: {payload}\nUSER_ID: {user_id}")
+        print(f"JWT Extracted. \nToken: {token}\nPayload: {payload}\nUSER_ID: {user_id}")
 
 
         if not user_id:
