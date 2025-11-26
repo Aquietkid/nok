@@ -76,7 +76,7 @@ def process_faces():
     frames_with_faces = 0
     captured_frames = []
 
-    while frames_with_faces < 5:
+    while frames_with_faces < 2:
         success, frame = cap.read()
         if not success:
             continue

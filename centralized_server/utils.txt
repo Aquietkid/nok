@@ -1,1 +1,2 @@
-pip install fastapi uvicorn pymongo python-dotenv python-jose passlib[bcrypt] insightface onnxruntime python-multipart boto3 firebase-admin
+pip install fastapi uvicorn pymongo python-dotenv python-jose passlib[bcrypt] insightface onnxruntime python-multipart boto3 firebase-admin pip install aiohttp
+python.exe -m pip install --upgrade pip
