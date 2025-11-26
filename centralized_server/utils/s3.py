@@ -28,7 +28,7 @@ def upload_image_to_s3(file):
             filename,
             ExtraArgs={"ContentType": file.content_type}
         )
-        return f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}"
+        return f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
     except NoCredentialsError:
         print("ERROR! S3 credentials not configured correctly")
         raise Exception("S3 credentials not configured correctly")
