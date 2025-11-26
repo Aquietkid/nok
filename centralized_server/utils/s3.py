@@ -42,11 +42,12 @@ def upload_image_to_s3(file):
     print(f"Content Type: {content_type}\tFile Extension: {file_ext}")
     filename = f"{uuid.uuid4()}{file_ext}"
     print(f"Filename: {filename}")
+    print(f"File type: {type(file)}")
 
     try:
         print("Initiating upload image to S3")
         s3.upload_fileobj(
-            file.file,
+            file,
             BUCKET_NAME,
             filename,
             ExtraArgs={"ContentType": content_type}
