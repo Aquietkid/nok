@@ -55,7 +55,7 @@ async def login_user(request: Request):
 
 
 async def authenticate(request: Request):
-    user_id = request.state._id
+    user_id = request.state.get('_id')
 
     user = db.users.find_one({"_id": ObjectId(user_id)})
     

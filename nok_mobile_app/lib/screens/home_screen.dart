@@ -5,7 +5,7 @@ import 'package:nok_mobile_app/services/api_service.dart';
 import 'person_detail_screen.dart';
 import 'add_person_screen.dart';
 
-const int imageCountPerPerson = 3;
+const int imageCountPerPerson = 1;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

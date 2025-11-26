@@ -17,6 +17,7 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
   final List<File?> _images = List.filled(imageCountPerPerson, null);
 
   final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false;
 
   Future<void> _pickImage(int index) async {
     try {
@@ -52,26 +53,30 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
   //   Navigator.pop(context, newPerson);
   // }
 
-Future<void> _savePerson() async {
-  if (_nameController.text.isEmpty || _images.any((img) => img == null)) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please fill all fields")),
-    );
-    return;
+  Future<void> _savePerson() async {
+    if (_nameController.text.isEmpty || _images.any((img) => img == null)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+      return;
+    }
+
+    final apiService = ApiService();
+    setState(() {
+      _isLoading = true;
+    });
+    final newPerson = await apiService.addPerson(_nameController.text, _images);
+
+    if (newPerson != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Person saved successfully!")),
+      );
+      Navigator.pop(context, newPerson);
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
-
-  final apiService = ApiService();
-
-  final newPerson = await apiService.addPerson(_nameController.text, _images);
-
-  if (newPerson != null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Person saved successfully!")),
-    );
-    Navigator.pop(context, newPerson);
-  }
-}
-
 
   @override
   void dispose() {
@@ -113,7 +118,20 @@ Future<void> _savePerson() async {
               ),
               const SizedBox(height: 16),
             ],
-            ElevatedButton(onPressed: _savePerson, child: const Text("Save")),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _savePerson,
+              child:
+                  _isLoading
+                      ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Text("Save"),
+            ),
           ],
         ),
       ),

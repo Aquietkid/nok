@@ -8,29 +8,41 @@ import 'package:nok_mobile_app/models/user.dart';
 import 'package:nok_mobile_app/services/snackbar_service.dart';
 import 'package:nok_mobile_app/services/storage.dart';
 import 'package:nok_mobile_app/utils/api_handler.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 class ApiService {
   String baseUrl = Config().baseUrl;
 
- Future<Person?> addPerson(String name, List<File?> images) async {
+  Future<Person?> addPerson(String name, List<File?> images) async {
     final token = await Storage.getToken();
 
     final response = await apiHandler<Person?>(
       () async {
-        var uri = Uri.parse(" $baseUrl/api/person/add");
+        var uri = Uri.parse("$baseUrl/api/person/add");
         var request = http.MultipartRequest('POST', uri);
         request.headers['Authorization'] = "Bearer $token";
         request.fields['name'] = name;
 
         for (var img in images) {
           if (img != null) {
-            request.files.add(await http.MultipartFile.fromPath('picture', img.path));
+            final mimeType = lookupMimeType(img.path) ?? 'image/jpeg';
+            final mimeParts = mimeType.split('/');
+
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                'picture',
+                img.path,
+                contentType: MediaType(mimeParts[0], mimeParts[1]),
+              ),
+            );
           }
         }
 
+        // Send the request and convert streamed response to http.Response
         var streamedResponse = await request.send();
         var respStr = await streamedResponse.stream.bytesToString();
-        return json.decode(respStr);
+        return http.Response(respStr, streamedResponse.statusCode);
       },
       (data) {
         if (data['success'] == true) {
