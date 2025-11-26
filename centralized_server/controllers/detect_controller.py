@@ -1,6 +1,7 @@
 from fastapi import Request, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
 import tempfile
 import os
@@ -119,7 +120,7 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
                 request=OutstandingRequest(
                     images=uploaded_urls,
                     status='pending',
-                    timestamp=datetime.now(datetime.timezone.utc)
+                    timestamp=datetime.now(timezone.utc)
                 )
             )
 
