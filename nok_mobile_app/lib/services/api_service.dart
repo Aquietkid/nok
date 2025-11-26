@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:nok_mobile_app/config.dart';
 import 'package:nok_mobile_app/models/person.dart';
@@ -10,6 +11,42 @@ import 'package:nok_mobile_app/utils/api_handler.dart';
 
 class ApiService {
   String baseUrl = Config().baseUrl;
+
+ Future<Person?> addPerson(String name, List<File?> images) async {
+    final token = await Storage.getToken();
+
+    final response = await apiHandler<Person?>(
+      () async {
+        var uri = Uri.parse(" $baseUrl/api/person/add");
+        var request = http.MultipartRequest('POST', uri);
+        request.headers['Authorization'] = "Bearer $token";
+        request.fields['name'] = name;
+
+        for (var img in images) {
+          if (img != null) {
+            request.files.add(await http.MultipartFile.fromPath('picture', img.path));
+          }
+        }
+
+        var streamedResponse = await request.send();
+        var respStr = await streamedResponse.stream.bytesToString();
+        return json.decode(respStr);
+      },
+      (data) {
+        if (data['success'] == true) {
+          return Person(
+            name: data['data']['name'],
+            image: data['data']['picture'],
+          );
+        } else {
+          SnackbarService.show("Error: ${data['message']}");
+          return null;
+        }
+      },
+    );
+
+    return response.data;
+  }
 
   Future<bool?> signIn(String email, String password) async {
     final response = await apiHandler<Future<bool>>(

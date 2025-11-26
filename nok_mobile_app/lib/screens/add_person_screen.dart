@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nok_mobile_app/models/person.dart';
+import 'package:nok_mobile_app/services/api_service.dart';
 import 'home_screen.dart';
 
 class AddPersonScreen extends StatefulWidget {
@@ -34,22 +35,43 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
     }
   }
 
-  void _savePerson() {
-    if (_nameController.text.isEmpty || _images.any((img) => img == null)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
-      return;
-    }
+  // void _savePerson() {
+  //   if (_nameController.text.isEmpty || _images.any((img) => img == null)) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+  //     return;
+  //   }
 
-    final newPerson = Person(
-      name: _nameController.text,
-      // For now, just storing file paths. Later you’ll replace this with uploaded URLs.
-      image: "_images.first()",
+  //   final newPerson = Person(
+  //     name: _nameController.text,
+  //     // For now, just storing file paths. Later you’ll replace this with uploaded URLs.
+  //     image: "_images.first()",
+  //   );
+
+  //   Navigator.pop(context, newPerson);
+  // }
+
+Future<void> _savePerson() async {
+  if (_nameController.text.isEmpty || _images.any((img) => img == null)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Please fill all fields")),
     );
+    return;
+  }
 
+  final apiService = ApiService();
+
+  final newPerson = await apiService.addPerson(_nameController.text, _images);
+
+  if (newPerson != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Person saved successfully!")),
+    );
     Navigator.pop(context, newPerson);
   }
+}
+
 
   @override
   void dispose() {
