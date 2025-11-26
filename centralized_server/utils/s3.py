@@ -34,9 +34,11 @@ s3 = boto3.client(
 #         raise Exception("S3 credentials not configured correctly")
 
 def upload_image_to_s3(file):
+    import mimetypes, uuid
     content_type = file.content_type or "image/jpeg"
     file_ext = mimetypes.guess_extension(content_type) or ".jpg"
     filename = f"{uuid.uuid4()}{file_ext}"
+
     try:
         s3.upload_fileobj(
             file.file,
@@ -44,7 +46,12 @@ def upload_image_to_s3(file):
             filename,
             ExtraArgs={"ContentType": content_type}
         )
-        return f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}"
+    except Exception as e:
+        print(f"Error uploading to S3: {e}")
+        raise
+
+    return f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}"
+
 
 
 
