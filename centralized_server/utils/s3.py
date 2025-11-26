@@ -18,20 +18,34 @@ s3 = boto3.client(
     region_name=AWS_REGION,
 )
 
+# def upload_image_to_s3(file):
+#     file_ext = mimetypes.guess_extension(file.content_type)
+#     filename = f"{uuid.uuid4()}{file_ext or ''}"
+#     try:
+#         s3.upload_fileobj(
+#             file.file,
+#             BUCKET_NAME,
+#             filename,
+#             ExtraArgs={"ContentType": file.content_type}
+#         )
+#         return f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
+#     except NoCredentialsError:
+#         print("ERROR! S3 credentials not configured correctly")
+#         raise Exception("S3 credentials not configured correctly")
+
 def upload_image_to_s3(file):
-    file_ext = mimetypes.guess_extension(file.content_type)
-    filename = f"{uuid.uuid4()}{file_ext or ''}"
+    content_type = file.content_type or "image/jpeg"
+    file_ext = mimetypes.guess_extension(content_type) or ".jpg"
+    filename = f"{uuid.uuid4()}{file_ext}"
     try:
         s3.upload_fileobj(
             file.file,
             BUCKET_NAME,
             filename,
-            ExtraArgs={"ContentType": file.content_type}
+            ExtraArgs={"ContentType": content_type}
         )
-        return f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
-    except NoCredentialsError:
-        print("ERROR! S3 credentials not configured correctly")
-        raise Exception("S3 credentials not configured correctly")
+        return f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}"
+
 
 
 def delete_image_from_s3(image_url: str):
