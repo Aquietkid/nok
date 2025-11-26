@@ -36,7 +36,7 @@ s3 = boto3.client(
 
 def upload_image_to_s3(file):
 
-    content_type = file.content_type or "image/jpeg"
+    content_type = getattr(file, "content_type", None) or "image/jpeg"
     file_ext = mimetypes.guess_extension(content_type) or ".jpg"
     filename = f"{uuid.uuid4()}{file_ext}"
 
@@ -51,10 +51,7 @@ def upload_image_to_s3(file):
         print(f"Error uploading to S3: {e}")
         raise
 
-    return f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}"
-
-
-
+    return f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
 
 
 def delete_image_from_s3(image_url: str):
