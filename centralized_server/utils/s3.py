@@ -37,10 +37,14 @@ s3 = boto3.client(
 def upload_image_to_s3(file):
 
     content_type = getattr(file, "content_type", None) or "image/jpeg"
+    print(content_type)
     file_ext = mimetypes.guess_extension(content_type) or ".jpg"
+    print(f"Content Type: {content_type}\tFile Extension: {file_ext}")
     filename = f"{uuid.uuid4()}{file_ext}"
+    print(f"Filename: {filename}")
 
     try:
+        print("Initiating upload image to S3")
         s3.upload_fileobj(
             file.file,
             BUCKET_NAME,
