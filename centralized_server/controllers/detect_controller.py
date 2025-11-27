@@ -42,7 +42,7 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
     if len(images) != 2:
         return JSONResponse(
             content={"success": False,
-                     "message": "Exactly 5 test images are required"},
+                     "message": "Exactly 2 test images are required"},
             status_code=400,
         )
 
@@ -115,7 +115,7 @@ async def detect(request: Request, images: List[UploadFile] = File(...)):
                 uploaded_urls.append(url)
 
             print("Adding outstanding request")
-            add_outstanding_req(
+            request_id = add_outstanding_req(
                 local_server_user_id=user_id,
                 request=OutstandingRequest(
                     images=uploaded_urls,
